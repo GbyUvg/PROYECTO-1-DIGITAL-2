@@ -1,0 +1,87 @@
+//--------------------------------------------
+// Universidad del Valle de Guatemala
+// BE3029 - Electronica Digital 2
+// GABRIELA VELASQUEZ
+// 31/07/2026
+// PROYECTO 1
+//
+//------------------------------------------
+
+
+// Librerias
+//--------------------------------------------
+#include <Arduino.h>
+#include <stdint.h>
+
+//--------------------------------------------
+// Definiciones
+//--------------------------------------------
+#define LM35 39
+#define boton 36
+
+
+
+
+
+
+//--------------------------------------------
+// Prototipos de funciones
+//--------------------------------------------
+  float temperatura();
+
+
+
+
+//--------------------------------------------
+// Variables globales
+//--------------------------------------------
+float celcius = 0.0;
+volatile bool estadoboton = false;
+
+
+
+//--------------------------------------------
+// ISRs Rutinas de Interrupcion
+//--------------------------------------------
+void IRAM_ATTR botonISR(){
+  estadoboton = true;
+}
+//--------------------------------------------
+// Configuracion
+//--------------------------------------------
+void setup(){
+  
+  Serial.begin(115200);
+  pinMode(LM35, INPUT);
+  pinMode(boton, INPUT);
+  //attachInterrupt(digitalPinToInterrupt(boton), botonISR, RISING);
+}
+//--------------------------------------------
+// Loop Principal
+//--------------------------------------------
+void loop() {
+  /*if(estadoboton){
+
+    celcius = temperatura();
+    Serial.print(" Temperatura: ");
+    Serial.println(celcius);
+    estadoboton = false;
+   }*/
+  digitalRead(36);
+  Serial.print("boton: ");
+  Serial.println(digitalRead(36));
+  delay(500);
+  
+}
+//--------------------------------------------
+// Otras funciones
+float temperatura(){
+  int adc = analogRead(LM35);
+  float voltaje = adc * 3.3 / 4095.0;
+  float temp = (voltaje * 100) ;
+  return temp;
+  
+  
+}
+
+//--------------------------------------------
