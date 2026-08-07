@@ -1,0 +1,76 @@
+//--------------------------------------------
+// Universidad del Valle de Guatemala
+// BE3029 - Electronica Digital 2
+// GABRIELA VELASQUEZ
+// 31/07/2026
+// PROYECTO 1
+//
+//------------------------------------------
+
+
+// Librerias
+//--------------------------------------------
+#include <Arduino.h>
+#include <stdint.h>
+
+//--------------------------------------------
+// Definiciones
+//--------------------------------------------
+#define LM35 39
+
+
+
+
+
+
+
+//--------------------------------------------
+// Prototipos de funciones
+//--------------------------------------------
+  float temperatura();
+
+
+
+
+//--------------------------------------------
+// Variables globales
+//--------------------------------------------
+float celcius = 0.0;
+
+
+
+
+//--------------------------------------------
+// ISRs Rutinas de Interrupcion
+//--------------------------------------------
+
+//--------------------------------------------
+// Configuracion
+//--------------------------------------------
+void setup(){
+  
+  Serial.begin(115200);
+  pinMode(LM35, INPUT);
+}
+//--------------------------------------------
+// Loop Principal
+//--------------------------------------------
+void loop() {
+  celcius = temperatura();
+  Serial.print(" Temperatura: ");
+  Serial.println(celcius);
+  delay(1000);
+  
+}
+//--------------------------------------------
+// Otras funciones
+float temperatura(){
+  int adc = analogRead(LM35);
+  float voltaje = adc * 3.3 / 4095.0;
+  float temp = (voltaje * 100) ;
+  return temp;
+  
+  
+}
+
+//--------------------------------------------
