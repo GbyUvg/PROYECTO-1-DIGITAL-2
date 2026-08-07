@@ -88,7 +88,7 @@ void loop() {
     }
     else if(celcius >= 25 && celcius < 27){
       Serial.println("Estado: Cerca del limite");
-      rgb(255, 255, 0); // Amarillo
+      rgb(255, 230, 0); // Amarillo
     }
     else if(celcius >= 27){
       Serial.println("Estado: Riesgo por calor");
