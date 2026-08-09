@@ -67,7 +67,7 @@ void setup(){
   ledcAttachPin(rojo, 0);
   ledcAttachPin(verde, 1);
   ledcAttachPin(azul, 2);
-  ledcSetup(3, 50, 8); //  servo
+  ledcSetup(3, 50, 16); //  servo
   ledcAttachPin(servo, 3);
   attachInterrupt(digitalPinToInterrupt(boton), botonISR, RISING);
 }
