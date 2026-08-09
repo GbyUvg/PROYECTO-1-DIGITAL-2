@@ -1,0 +1,159 @@
+//--------------------------------------------
+// Universidad del Valle de Guatemala
+// BE3029 - Electronica Digital 2
+// GABRIELA VELASQUEZ
+// 31/07/2026
+// PROYECTO 1
+//
+//------------------------------------------
+
+
+// Librerias
+//--------------------------------------------
+#include <Arduino.h>
+#include <stdint.h>
+
+//--------------------------------------------
+// Definiciones
+//--------------------------------------------
+#define LM35 39
+#define boton 36
+#define rojo 26
+#define verde 25
+#define azul 33
+#define servo 27
+#define a 2
+#define b 23
+#define c 22
+#define d 21 
+#define e 19
+#define f 18
+#define g 5
+#define dp 4
+#define du 13
+#define dd 12
+#define dt 14
+
+
+
+
+
+
+//--------------------------------------------
+// Prototipos de funciones
+//--------------------------------------------
+float temperatura();
+void rgb(int red, int green, int blue);
+void mservo(int angulo);
+
+
+
+
+//--------------------------------------------
+// Variables globales
+//--------------------------------------------
+float celcius = 0.0;
+volatile bool estadoboton = false;
+int angulo = 0;
+
+
+
+//--------------------------------------------
+// ISRs Rutinas de Interrupcion
+//--------------------------------------------
+void IRAM_ATTR botonISR(){
+  estadoboton = true;
+}
+//--------------------------------------------
+// Configuracion
+//--------------------------------------------
+void setup(){
+  
+  Serial.begin(115200);
+  pinMode(LM35, INPUT);
+  pinMode(boton, INPUT);
+  ledcSetup(0, 5000, 8); //para el rojo
+  ledcSetup(1, 5000, 8);  // verde
+  ledcSetup(2, 5000, 8); // azul
+  ledcAttachPin(rojo, 0);
+  ledcAttachPin(verde, 1);
+  ledcAttachPin(azul, 2);
+  ledcSetup(3, 50, 8); //  servo
+  ledcAttachPin(servo, 3);
+  pinMode(a, OUTPUT);
+  pinMode(b, OUTPUT);
+  pinMode(c, OUTPUT);
+  pinMode(d, OUTPUT);
+  pinMode(e, OUTPUT);
+  pinMode(f, OUTPUT);
+  pinMode(g, OUTPUT);
+  pinMode(dp, OUTPUT);
+  pinMode(du, OUTPUT);
+  pinMode(dd, OUTPUT);
+  pinMode(dt, OUTPUT);
+  attachInterrupt(digitalPinToInterrupt(boton), botonISR, RISING);
+}
+//--------------------------------------------
+// Loop Principal
+//--------------------------------------------
+void loop() {
+
+  if(estadoboton){
+
+    celcius = temperatura();
+    Serial.print(" Temperatura: ");
+    Serial.println(celcius);
+    //digitalWrite(du, HIGH);
+    //digitalWrite(a, HIGH);
+    
+
+   
+    if(celcius <23){
+      Serial.println("Estado: Riesgo por frio");
+      rgb(0, 0, 255); // Azul
+      mservo(0); // cerrado
+    }
+    else if(celcius >= 23 && celcius < 25){
+      Serial.println("Estado: Rango seguro");
+      rgb(0, 255, 0); // Verde
+      mservo(90); // medio
+    }
+    else if(celcius >= 25 && celcius < 27){
+      Serial.println("Estado: Cerca del limite");
+      rgb(255, 230, 0); // Amarillo
+      mservo(90); // medio
+    }
+    else if(celcius >= 27){
+      Serial.println("Estado: Riesgo por calor");
+      rgb(255, 0, 0); // Rojo
+      mservo(180); // abierto
+    }
+
+    estadoboton = false;
+   }
+
+  
+}
+//--------------------------------------------
+// Otras funciones
+float temperatura(){
+  int adc = analogRead(LM35);
+  float voltaje = adc * 3.32 / 4095.0;
+  float temp = (voltaje * 100) + 10 ;
+  return temp;
+
+  
+}
+
+void rgb(int red, int green, int blue){
+  ledcWrite(0, red);
+  ledcWrite(1, green);  
+  ledcWrite(2,blue);
+}
+
+void mservo(int angulo){
+  int dutyc = map(angulo,0,180,3277,6554);
+  ledcWrite(3,dutyc);
+}
+
+//--------------------------------------------
